@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { userDataContext } from "../context/userContext";
 import axios from "axios";
 import { IoMdArrowBack } from "react-icons/io";
-import Customize from "./Customize";
 
 
 function Customize2() {
