@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import SignIn from "./pages/signIn.jsx";
+import SignIn from "./pages/SignIn.jsx";
 import SignUp from "./pages/singUp.jsx";
 import Customize from "./pages/Customize.jsx";
 import Home from "./pages/Home.jsx";
@@ -40,7 +40,7 @@ function App(){
         element={
           userData 
             ? <Customize /> 
-            : <Navigate to={'/signin'} />
+            : <Navigate to={'/signup'} />
         } 
       />
       <Route 
@@ -48,7 +48,7 @@ function App(){
         element={
           userData 
             ? <Customize2 /> 
-            : <Navigate to={'/signin'} />
+            : <Navigate to={'/signup'} />
         } 
       />
     </Routes>

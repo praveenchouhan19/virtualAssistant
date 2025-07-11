@@ -22,22 +22,39 @@ function UserContext({ children }) {
     }
   };
 
-  useEffect(() => {
-    handleCurrentUser();
-  }, []);
+  const getGeminiResponse = async (command) => {
+    try {
+      const result = await axios.post(`${serverUrl}/api/user/asktoassistant`, 
+        {command},
+       { withCredentials: true });
+      return result.data;
+    } catch (error) {
+      console.error("Error getting Gemini response:", error);
+    }
+  };
+
+
+
+  // useEffect(() => {
+  //   handleCurrentUser();
+  // }, []);
 
   const value = {
     serverUrl,
     userData,setUserData,
     frontendImage, setFrontendImage,
     backendImage, setBackendImage,
-    selectedImage, setSelectedImage
+    selectedImage, setSelectedImage,
+    getGeminiResponse,
+    handleCurrentUser
   };
 
   return (
-    <userDataContext.Provider value={value}>
-      {children}
-    </userDataContext.Provider>
+    <div>
+      <userDataContext.Provider value={value}>
+        {children}
+      </userDataContext.Provider>
+    </div>
   );
 }
 

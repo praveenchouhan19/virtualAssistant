@@ -2,6 +2,7 @@ import React, { use, useContext, useRef, useState } from 'react';
 import Card from '../components/Cards.jsx';
 import { FaRegFileImage } from "react-icons/fa6";
 import { userDataContext } from '../context/userContext.jsx';
+import { IoMdArrowBack } from "react-icons/io";
 
 import image1 from '../assets/image1.avif';
 import image2 from '../assets/image2.avif';
@@ -32,6 +33,8 @@ function Customize() {
 
   return (
     <div className='w-full h-[100vh] bg-gradient-to-t from-black to-[#030353] flex justify-center items-center flex-col p-[20px]'>
+    <IoMdArrowBack className="absolute top-[30px] left-[30px] text-white w-[25px] h-[25px] cursor-pointer"
+          onClick={()=>navigate("/")}/>
     <h1 className='text-white mb-[20px] text-[30px] text-center'>Customize your <span className='text-blue-400'>Virtual Assistant</span>
     </h1>
       <div className='w-full max-w-[900px] flex flex-wrap justify-center items-center gap-[15px]'>

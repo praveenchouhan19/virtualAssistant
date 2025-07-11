@@ -5,6 +5,8 @@ import { IoMdEyeOff } from "react-icons/io";
 import {useNavigate} from "react-router-dom";
 import { userDataContext } from '../context/userContext';
 import axios from "axios"
+
+
 function SignIn() {
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
@@ -23,6 +25,7 @@ function SignIn() {
             email, password
         }, { withCredentials: true })
         setUserData(result.data)
+        console.log(result.data)
         setLoading(false)
     } catch (error) {
         console.log("Error:", error)

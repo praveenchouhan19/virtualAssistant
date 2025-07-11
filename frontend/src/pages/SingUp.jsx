@@ -24,6 +24,7 @@ function SignUp() {
         name, email, password
       }, { withCredentials: true })
       setUserData(result.data)
+      console.log(result.data)
       setLoading(false)
       navigate("/customize")
     } catch (error) {
