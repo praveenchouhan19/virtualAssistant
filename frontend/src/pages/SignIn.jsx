@@ -27,6 +27,12 @@ function SignIn() {
         setUserData(result.data)
         console.log(result.data)
         setLoading(false)
+        
+        if (result.data?.assistantImage && result.data?.assistantName) {
+            navigate("/")
+        } else {
+            navigate("/customize")
+        }
     } catch (error) {
         console.log("Error:", error)
         setLoading(false)

@@ -28,13 +28,12 @@ export const signUp = async (req, res) => {
 
     const token = genToken(user._id);
 
-    // after generating token
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "Lax",
-     path: "/",   // <-- Add this
-    });
+            httpOnly: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            secure: false,
+            sameSite: "strict",
+        });
 
 
     res.status(201).json(user);
@@ -58,14 +57,14 @@ export const Login = async (req, res) => {
       return res.status(400).json({ message: "incorrect password" });
     }
 
-    const token = genToken(user._id);
-
+    const token = await genToken(user._id);
+    console.log(" token:", token);
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,        // okay for local dev over HTTP
-      sameSite: "Lax",
-      path: "/",            // 👈 ensure browser sends it to /api/user
-    });
+            httpOnly: true,
+            maxAge: 10 * 24 * 60 * 60 * 1000,
+            secure: false,
+            sameSite: "strict",
+        });
 
 
     res.status(200).json(user);

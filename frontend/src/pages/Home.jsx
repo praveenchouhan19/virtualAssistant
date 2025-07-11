@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { userDataContext } from '../context/userContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import aiImg from '../assets/ai.png'
+import aiImg from "../assets/ai.gif"
 import userImg from '../assets/user.gif'
 import { HiMenuAlt3 } from "react-icons/hi";
 import { ImCross } from "react-icons/im";
@@ -13,6 +13,7 @@ function Home() {
   const [listening, setListening] = useState(false)
   const [userText, setUserText] = useState("")
   const [aiText, setAiText] = useState("")
+  const [speechSupported, setSpeechSupported] = useState(true)
 
   const isSpeakingRef = useRef(false)
   const recognitionRef = useRef(null)
@@ -33,6 +34,10 @@ function Home() {
   };
 
   const startRecognition = () => {
+    if (!recognitionRef.current) {
+      console.warn("Speech recognition is not available");
+      return;
+    }
     try {
       recognitionRef.current?.start();
       setListening(true);
@@ -104,18 +109,32 @@ function Home() {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
 
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.lang = 'en-US';
-    recognition.interimResults = false;
+    // Check if SpeechRecognition is supported
+    if (!SpeechRecognition) {
+      console.warn("Speech Recognition is not supported in this browser");
+      setSpeechSupported(false);
+      setAiText("Speech recognition is not supported in your browser. Please use Chrome, Edge, or Safari for voice features.");
+      return;
+    }
 
-    recognitionRef.current = recognition; 
-    
+    let recognition;
+    try {
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+    } catch (error) {
+      console.error("Error creating SpeechRecognition:", error);
+      setSpeechSupported(false);
+      setAiText("Voice recognition could not be initialized. Please check your browser permissions.");
+      return;
+    }
 
+    recognitionRef.current = recognition;    
     const safeRecognition = () => {
-      if (!isSpeakingRef.current && !isRecognizingRef.current) {
+      if (!recognition || !isSpeakingRef.current && !isRecognizingRef.current) {
         try {
-          recognition.start();
+          recognition?.start();
           console.log("Recognition requested to start");
         } catch (err) {
           if (err.name !== "InvalidStateError") {
@@ -176,13 +195,19 @@ function Home() {
 
     };
     const fallback = setInterval(() => {
-      if (!isRecognizingRef.current && !isSpeakingRef.current) {
+      if (!isRecognizingRef.current && !isSpeakingRef.current && recognition) {
         safeRecognition();
       }
     },1000);
-    safeRecognition();
+    
+    if (recognition) {
+      safeRecognition();
+    }
+    
     return () => {
-      recognition.stop();
+      if (recognition) {
+        recognition.stop();
+      }
       setListening(false);
       isRecognizingRef.current = false;
       clearInterval(fallback);
@@ -199,7 +224,7 @@ function Home() {
     <div className="w-full h-[100vh] bg-gradient-to-t from-[black] to-[#02023d] flex justify-center items-center flex-col gap-[50px]">
       
       <HiMenuAlt3 className='lg:hidden text-white absolute top-[20px] right-[20px] w-[25px] h-[25px]' />
-      <div className='absolute top-0 w-full h-full bg-[#00000053] backdrop-blur-lg p-[20px] flex flex-col gap-[20px] item-start'>
+      {/* <div className='absolute top-0 w-full h-full bg-[#00000053] backdrop-blur-lg p-[20px] flex flex-col gap-[20px] item-start'>
         <ImCross className='text-white absolute top-[20px] right-[20px] w-[25px] h-[25px]' />
         <button
           className="min-w-[150px] h-[60px]  text-black font-semibold  bg-white rounded-full text-[19px] cursor-pointer"
@@ -216,7 +241,7 @@ function Home() {
         </button>
 
         
-      </div>
+      </div> */}
 
 
       <button
@@ -243,6 +268,19 @@ function Home() {
       <h1 className="text-white text-[18px] font-semibold text-wrap">
         {userText ? userText : aiText ? aiText : null}
       </h1>
+
+      {!speechSupported && (
+        <div className="bg-red-500 text-white p-4 rounded-lg mt-4 text-center">
+          <p className="text-sm">Voice features are not available in your browser.</p>
+          <p className="text-xs mt-1">Please use Chrome, Edge, or Safari for voice interaction.</p>
+        </div>
+      )}
+
+      {listening && speechSupported && (
+        <div className="bg-green-500 text-white p-2 rounded-lg mt-2">
+          <p className="text-sm">🎤 Listening... Say "{userData?.assistantName}" to start</p>
+        </div>
+      )}
 
     
     </div>

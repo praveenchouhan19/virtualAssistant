@@ -7,7 +7,7 @@ import moment from "moment";
 export const getCurrentUser = async (req, res) => {
   try {
     console.log("Incoming cookies:", req.cookies);
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await User.findById(req.userId).select("-password");
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
